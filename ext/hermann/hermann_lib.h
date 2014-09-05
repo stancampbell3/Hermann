@@ -2,16 +2,17 @@
  * hermann_lib.h - Ruby wrapper for the librdkafka library
  *
  * Copyright (c) 2014 Stan Campbell
+ * Copyright (c) 2014 Lookout, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ *	this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ *	this list of conditions and the following disclaimer in the documentation
+ *	and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -45,9 +46,17 @@
 #undef TRACE
 
 // Holds the defined Ruby module for Hermann
-static VALUE m_hermann;
+static VALUE hermann_module;
 
 static int DEBUG = 0;
+
+// Hold the system signal handler
+static void (*ruby_vm_sighandler)(int) = NULL;
+
+// Global klaxon announcing we're going down
+// 0 - normal operation
+// 1 - we're going down
+static int KLAXON = 0;
 
 // Should we expect rb_thread_blocking_region to be present?
 // #define RB_THREAD_BLOCKING_REGION
@@ -60,25 +69,28 @@ static 	enum {
 
 typedef struct HermannInstanceConfig {
 
-    char* topic;
+	char* topic;
 
-    /* Kafka configuration */
-    rd_kafka_t *rk;
-    rd_kafka_topic_t *rkt;
-    char *brokers;
-    int partition;
-    rd_kafka_topic_conf_t *topic_conf;
-    char errstr[512];
-    rd_kafka_conf_t *conf;
-    const char *debug;
-    int64_t start_offset;
-    int do_conf_dump;
+	/* Kafka configuration */
+	rd_kafka_t *rk;
+	rd_kafka_topic_t *rkt;
+	char *brokers;
+	int partition;
+	rd_kafka_topic_conf_t *topic_conf;
+	char errstr[512];
+	rd_kafka_conf_t *conf;
+	const char *debug;
+	int64_t start_offset;
+	int do_conf_dump;
 
-    int run;
-    int exit_eof;
-    int quiet;
+	/* Optional pointer to executable block */
+	VALUE *block;
 
-    int isInitialized;
+	int run;
+	int exit_eof;
+	int quiet;
+
+	int isInitialized;
 
 } HermannInstanceConfig;
 
