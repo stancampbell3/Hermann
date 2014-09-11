@@ -57,6 +57,7 @@
 static VALUE hermann_module;
 
 #define HERMANN_MAX_ERRSTR_LEN 512
+#define HERMANN_MAX_TOPIC_LEN 512
 
 static int DEBUG = 0;
 

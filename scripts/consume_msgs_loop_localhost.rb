@@ -1,6 +1,6 @@
 require 'rubygems'
-require 'lib/hermann'
-require 'lib/hermann/consumer'
+require 'hermann'
+require 'hermann/consumer'
 
 c = Hermann::Consumer.new( "lms_messages", "localhost:9092", 0 )
 t1 = 0
