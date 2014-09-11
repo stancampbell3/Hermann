@@ -1,31 +1,25 @@
+require 'rubygems'
+require "bundler/gem_tasks"
+require 'rspec/core/rake_task'
+require 'rake/extensiontask'
 
-require 'rake/clean'
 
-EXT_CONF = "ext/extconf.rb"
-MAKEFILE = 'ext/Makefile'
-MODULE = 'ext/hermann_lib.so'
-SRC = Dir.glob('ext/*.c')
-SRC << MAKEFILE
+Rake::ExtensionTask.new do |t|
+  t.name = 'hermann_lib'
+  t.ext_dir = 'ext/hermann'
+  t.gem_spec = Gem::Specification.load('hermann.gemspec')
+end
 
-CLEAN.include [ 'ext/*.o', 'ext/depend', 'ext/hermann_lib.bundle', MODULE ]
-CLOBBER.include [ 'config.save', 'ext/mkmf.log', 'ext/hermann_lib.bundle', MAKEFILE ]
+RSpec::Core::RakeTask.new(:spec) do |r|
+  r.rspec_opts = '--tag ~type:integration'
+end
 
-file MAKEFILE => EXT_CONF do |t|
-  Dir::chdir(File::dirname(EXT_CONF)) do
-    unless sh "ruby #{File::basename(EXT_CONF)}"
-      $stderr.puts "Failed to run extconf"
-      break
-    end
+namespace :spec do
+  RSpec::Core::RakeTask.new(:integration) do |r|
+    r.rspec_opts = '--tag type:integration'
   end
 end
 
-file MODULE => SRC do |t|
-  Dir::chdir(File::dirname(EXT_CONF)) do
-    unless sh "make"
-      $stderr.puts "make failed"
-    end
-  end
-end
+task :build => [:compile]
+task :default => [:clean, :build, :spec]
 
-desc "Build the native library"
-task :build => MODULE
