@@ -20,6 +20,8 @@ SPEC = Gem::Specification.new do |s|
 
   s.extensions = Dir['ext/**/extconf.rb']
 
+  s.platform = Gem::Platform::CURRENT
+
   s.require_paths = ["lib", "ext/hermann"]
   s.rubygems_version = '2.2.2'
 
