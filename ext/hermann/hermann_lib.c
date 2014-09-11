@@ -394,7 +394,7 @@ static VALUE consumer_consume(VALUE self) {
 	Data_Get_Struct(self, HermannInstanceConfig, consumerConfig);
 
 	if ((NULL == consumerConfig->topic) ||
-		(0 == strlen(consumerConfig->topic))) {
+		(0 == strnlen(consumerConfig->topic, HERMANN_MAX_TOPIC_LEN))) {
 		fprintf(stderr, "Topic is null!\n");
 		rb_raise(rb_eRuntimeError, "Topic cannot be empty");
 		return self;
@@ -555,7 +555,7 @@ static VALUE producer_push_single(VALUE self, VALUE message, VALUE result) {
 	TRACER("producerConfig: %p\n", producerConfig);
 
 	if ((NULL == producerConfig->topic) ||
-		(0 == strlen(producerConfig->topic))) {
+		(0 == strnlen(producerConfig->topic, HERMANN_MAX_TOPIC_LEN))) {
 		fprintf(stderr, "Topic is null!\n");
 		rb_raise(rb_eRuntimeError, "Topic cannot be empty");
 		return self;
@@ -577,7 +577,7 @@ static VALUE producer_push_single(VALUE self, VALUE message, VALUE result) {
 	if (-1 == rd_kafka_produce(producerConfig->rkt,
 						 producerConfig->partition,
 						 RD_KAFKA_MSG_F_COPY,
-						 rb_string_value_cstr(&message),
+						 RSTRING_PTR(message),
 						 RSTRING_LEN(message),
 						 NULL,
 						 0,
@@ -948,7 +948,7 @@ static VALUE producer_initialize(VALUE self,
  *  Copy the configuration information from orig into copy for the given Producer instances.
  *
  *  @param  copy	VALUE   destination Producer
- *  @param  orign   VALUE   source Producer
+ *  @param  orig   VALUE   source Producer
  */
 static VALUE producer_init_copy(VALUE copy,
 								VALUE orig) {
