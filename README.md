@@ -4,6 +4,8 @@
 
 A Ruby gem implementing a Kafka Publisher and Consumer
 
+### This project is now owned by Lookout Mobile Security.  Please refer to their project going forward.
+
 This library wraps the
 [librdkafka library](https://github.com/edenhill/librdkafka) which is
 implemented in C.  This library must be installed before we can use
